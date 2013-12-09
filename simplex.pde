@@ -20,9 +20,8 @@ public void setup() {
   size(640, 480);
   G4P.setGlobalColorScheme(GCScheme.RED_SCHEME);
   simplex=new matriz(condiciones, variables,this);
-  simplex.recorreMatrixY("dibujaInputMatrix", pasoActual);
   pasoActual=new float[simplex.cantFilas()][simplex.cantColumnas()];//Agrego las 'S'
- 
+  simplex.recorreMatrixY("dibujaInputMatrix", pasoActual);
   btnMdialog = new GButton(this, 50, 200, 80, 20,  "Calc");
   btnMdialog = new GButton(this, 100, 200, 80, 20, "Next");
   btnMdialog = new GButton(this, 150, 200, 80, 20, "Prev");
@@ -36,7 +35,7 @@ public void draw() {
   strokeWeight(2);
   switch(paso) {
   case 1: 
-    calculaSimplexOriginal();
+    //calculaSimplexOriginal();
     simplex.recorreMatrixY("dibujaOutputMatrix",pasoActual);
     break;
   default:
@@ -68,13 +67,3 @@ public void handleButtonEvents(GButton button, GEvent event) {
    paso=1;
   }
  }
-
-public void calculaSimplexOriginal(){
-    for (int condicion=0;condicion<simplex.cantFilas;condicion++)
-      for (int variable=0;variable<simplex.cantColumnas;variable++) 
-        if( simplex.devuelveValorFilaColumna(condicion,variable)!=null)
-          pasoActual[condicion][variable]=Float.valueOf(simplex.devuelveValorFilaColumna(condicion,variable));
-        else
-          pasoActual[condicion][variable]=0;
- pasos.add(pasoActual);
-}
