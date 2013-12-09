@@ -12,19 +12,22 @@ int condiciones=3;
 int variables=2;
 int paso=0;
 GButton btnMdialog;
+float[][] matrizOriginal;
 float[][] pasoActual;
 GLabel lblReply;
-ArrayList<float[] []> pasos;
+ArrayList<float[][]> matrices;
   
 public void setup() {
-  size(640, 480);
+  size(800, 600);
   G4P.setGlobalColorScheme(GCScheme.RED_SCHEME);
   simplex=new matriz(condiciones, variables,this);
-  pasoActual=new float[simplex.cantFilas()][simplex.cantColumnas()];//Agrego las 'S'
-  simplex.recorreMatrixY("dibujaInputMatrix", pasoActual);
+  matrizOriginal=new float[simplex.cantFilasOriginal()][simplex.cantColumnasOriginal()];
+  pasoActual=new float[simplex.cantFilasSimplex()][simplex.cantColumnasSimplex()];//Agrego las 'S'
+  simplex.recorreMatrixY("dibujaInputMatrix", matrizOriginal);
   btnMdialog = new GButton(this, 50, 200, 80, 20,  "Calc");
-  btnMdialog = new GButton(this, 100, 200, 80, 20, "Next");
-  btnMdialog = new GButton(this, 150, 200, 80, 20, "Prev");
+  matrices = new ArrayList();
+//  btnMdialog = new GButton(this, 100, 200, 80, 20, "Next");
+//  btnMdialog = new GButton(this, 150, 200, 80, 20, "Prev");
   
 }
 
@@ -35,8 +38,9 @@ public void draw() {
   strokeWeight(2);
   switch(paso) {
   case 1: 
-    //calculaSimplexOriginal();
+    pasoActual=simplex.devuelveMatrizIngresada();
     simplex.recorreMatrixY("dibujaOutputMatrix",pasoActual);
+    matrices.add(simplex);
     break;
   default:
     break;
@@ -66,4 +70,5 @@ public void handleButtonEvents(GButton button, GEvent event) {
   if(button == btnMdialog) {
    paso=1;
   }
- }
+}
+ 
