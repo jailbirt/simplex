@@ -6,29 +6,22 @@ class matriz {
   float[][]      simplex;
   PApplet        parent;  
   //Cantidad de condiciones y variables
-  int cantFilasOriginal, cantColumnasOriginal, cantFilasSimplex,cantColumnasSimplex;
+  int cantFilasSimplex,cantColumnasSimplex;
   GTabManager tt;
 
   //START Funcion constructora del panelIngreso2, ingreso uno son restricciones y tipo de problema. TODO!!!!!HERE!!!!
   matriz (int condiciones, int variables, PApplet parent) {
     this.parent=parent;
-    cantFilasOriginal=cantFilasSimplex=condiciones;
-    cantColumnasOriginal=variables+1;
+    cantFilasSimplex=condiciones;
     cantColumnasSimplex=(variables+condiciones+1);//Las 'S' y la condición última.
     
-    camposIngresar  = new GTextField[cantColumnasOriginal][cantColumnasOriginal]; //Input
+    camposIngresar  = new GTextField[cantFilasSimplex][cantColumnasSimplex]; //Input
     camposMostrar   = new GLabel[cantFilasSimplex][cantColumnasSimplex];//lavels que se muestran
     simplex         = new float[cantFilasSimplex][cantColumnasSimplex];  //Operaciones aca.
   }
   //END funcion Constructora
 
   //Getters.
-  int cantFilasOriginal () {
-    return cantFilasOriginal;
-  }
-  int cantColumnasOriginal () {
-    return cantColumnasOriginal;
-  }
   int cantFilasSimplex () {
     return cantFilasSimplex;
   }
@@ -42,9 +35,12 @@ class matriz {
     return this.camposMostrar;
   }
   float[][] devuelveMatrizIngresada(){
-    for (int fila=0;fila<cantFilasOriginal;fila++) 
-      for (int columna=0;columna<cantColumnasOriginal;columna++) 
-        simplex[fila][columna]=Float.parseFloat(camposIngresar[fila][columna].getText());
+    for (int fila=0;fila<cantFilasSimplex;fila++) 
+      for (int columna=0;columna<cantColumnasSimplex;columna++) 
+        if(camposIngresar[fila][columna].getText()!="")
+         simplex[fila][columna]=Float.parseFloat(camposIngresar[fila][columna].getText());
+        else
+         simplex[fila][columna]=0;
     return simplex;
   }
   //Fin Getters.
@@ -52,13 +48,13 @@ class matriz {
   //Fin Setters.
 
   void dibujaInputMatrix(int fila,int columna) {  
-    this.camposIngresar[fila][columna]= new GTextField(parent, fila*20*4, columna*20*4, 60, 40); 
+    // System.out.println(" Filas"+fila+" columnas "+columna);
+    this.camposIngresar[fila][columna]= new GTextField(parent,columna*20*4 ,(fila*20*4)+40 , 60, 40); 
     this.camposIngresar[fila][columna].tag = "F"+fila+"C"+columna;
     this.camposIngresar[fila][columna].setDefaultText("F"+(fila+1)+"C"+(columna+1));
   }
   void recorreMatrixY(String operacion, float [][] matriz) {
     tt = new GTabManager();
-       
     for (int fila=0;fila<matriz.length;fila++) {
       for (int columna=0;columna<matriz[0].length  ;columna++) {
        if ("dibujaInputMatrix" == operacion){
@@ -67,10 +63,10 @@ class matriz {
           tt.addControl(camposIngresar[fila][columna]);     
        }
         else if("dibujaOutputMatrix" == operacion) { //convierte a simplex.
-          convierteOriginalASimplex(fila,columna,matriz);
+          simplex[fila][columna]=matriz[fila][columna];
           dibujaOutputMatrix(fila,columna);
-          parent.line(300, cantColumnasSimplex*20*4, 300+(cantFilasSimplex*20*4), cantColumnasSimplex*20*4);
-          parent.line(300+(cantFilasSimplex*20*4), 1, 300+(cantFilasSimplex*20*4), cantColumnasSimplex*20*4);
+          parent.line( cantColumnasSimplex*20*4, 360, cantColumnasSimplex*20*4, 360+(cantFilasSimplex*20*4));
+          parent.line( 1,360+(cantFilasSimplex*20*4), cantColumnasSimplex*20*4, 360+(cantFilasSimplex*20*4));
         }
         else {
 
@@ -80,17 +76,12 @@ class matriz {
   }
 
  void dibujaOutputMatrix(int fila,int columna) {
-          parent.line(300+(fila*20*4), columna*20*4, 380+(fila*20*4), columna*20*4);
-          parent.line(300+(fila*20*4), columna*20*4, 300+(fila*20*4), 70+(columna*20*4));
-          camposMostrar[fila][columna] = new GLabel(parent, 300+(fila*20*4), columna*20*4, 60, 40);   
+          parent.line(columna*20*4,360+(fila*20*4) , columna*20*4,440+(fila*20*4) );
+          parent.line(columna*20*4,360+(fila*20*4) ,  70+(columna*20*4),360+(fila*20*4));
+          camposMostrar[fila][columna] = new GLabel(parent, columna*20*4,360+(fila*20*4) , 60, 40);   
           camposMostrar[fila][columna].setText(Float.toString(simplex[fila][columna]));
           camposMostrar[fila][columna].setLocalColorScheme(G4P.GREEN_SCHEME);
           camposMostrar[fila][columna].setTextAlign(GAlign.CENTER, GAlign.MIDDLE); 
- }
- 
- void convierteOriginalASimplex(int fila,int columna,float [][] matriz) //Se usa la primera vez para convertir el input, en SIMPLEX
- {
-    simplex[fila][columna]=matriz[fila][columna];
  }
  
 }

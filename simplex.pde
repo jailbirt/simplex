@@ -7,27 +7,34 @@ import g4p_controls.*;
 matriz simplex;
 
 GTabManager tt;
-
-int condiciones=3;
-int variables=2;
+GTextField condicion,variable; //primer pantalla.
+int condiciones,variables;
 int paso=0;
-GButton btnMdialog;
+GButton btnMdialog,btnMdialogNext,btnMdialogPrev,btnMdialogCancela;
 float[][] matrizOriginal;
 float[][] pasoActual;
 GLabel lblReply;
-ArrayList<float[][]> matrices;
+ArrayList<matriz> matrices;
   
 public void setup() {
-  size(800, 600);
+  size(1024, 768);
   G4P.setGlobalColorScheme(GCScheme.RED_SCHEME);
-  simplex=new matriz(condiciones, variables,this);
-  matrizOriginal=new float[simplex.cantFilasOriginal()][simplex.cantColumnasOriginal()];
-  pasoActual=new float[simplex.cantFilasSimplex()][simplex.cantColumnasSimplex()];//Agrego las 'S'
-  simplex.recorreMatrixY("dibujaInputMatrix", matrizOriginal);
-  btnMdialog = new GButton(this, 50, 200, 80, 20,  "Calc");
   matrices = new ArrayList();
-//  btnMdialog = new GButton(this, 100, 200, 80, 20, "Next");
-//  btnMdialog = new GButton(this, 150, 200, 80, 20, "Prev");
+  
+  //Ingreso de condicion/variables 1er pantalla
+  condicion=new GTextField(this,0,0,80,20);
+  condicion.tag = "condicion";
+  condicion.setDefaultText("condicion");
+  variable =new GTextField(this,90,0,80,20);
+  variable.tag = "variable";
+  variable.setDefaultText("variable");
+  tt = new GTabManager();
+  tt.addControls(condicion,variable);
+  //Fin Ingreso
+  btnMdialog = new GButton(this, 2, 300, 100, 20,  "Calcula");
+  btnMdialogNext = new GButton(this, 112, 300, 100, 20, "Next");
+  btnMdialogPrev = new GButton(this, 212, 300, 100, 20, "Prev");
+  btnMdialogCancela = new GButton(this, 312, 300, 90, 20, "Cancela");
   
 }
 
@@ -37,13 +44,24 @@ public void draw() {
   stroke(0);
   strokeWeight(2);
   switch(paso) {
-  case 1: 
-    pasoActual=simplex.devuelveMatrizIngresada();
-    simplex.recorreMatrixY("dibujaOutputMatrix",pasoActual);
-    matrices.add(simplex);
+  case 1:
+     if(simplex==null){
+       text("X1", 10, 30);
+       text("X2", 30, 30);
+       simplex=new matriz(condiciones, variables,this);
+       pasoActual=new float[simplex.cantFilasSimplex()][simplex.cantColumnasSimplex()];//Agrego las 'S'     
+        simplex.recorreMatrixY("dibujaInputMatrix", pasoActual);
+    }
+    break;
+  case 2: 
+   if(simplex!=null){
+     pasoActual=simplex.devuelveMatrizIngresada();
+     simplex.recorreMatrixY("dibujaOutputMatrix",pasoActual);
+     matrices.add(simplex);
+   }
     break;
   default:
-    break;
+    break;    
   }
 }
 
@@ -68,7 +86,25 @@ public void handleTextEvents(GEditableTextControl tc, GEvent event) {
 
 public void handleButtonEvents(GButton button, GEvent event) { 
   if(button == btnMdialog) {
-   paso=1;
+    condiciones=int(condicion.getText());
+    variables=int(variable.getText());
+    if(condiciones == 0 || variables == 0)
+      G4P.showMessage(this, "SETEAR VARIABLES Y CONDICIONES","SETEAR VARIABLES Y CONDICIONES", G4P.WARNING);
+    else
+      paso=1;
+  }
+  if(button == btnMdialogNext) {
+   paso=2;
+   System.out.println("Next");
+  }
+  if(button == btnMdialogPrev) {
+   paso=3;
+  }
+  if(button == btnMdialogCancela) {
+   paso=0;
+   simplex=null;
+   matrices=null;
+   pasoActual=null;
   }
 }
  
