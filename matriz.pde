@@ -37,7 +37,7 @@ class matriz {
   float[][] devuelveMatrizIngresada(){
     for (int fila=0;fila<cantFilasSimplex;fila++) 
       for (int columna=0;columna<cantColumnasSimplex;columna++) 
-        if(camposIngresar[fila][columna].getText()!="")
+        if(camposIngresar[fila][columna].getText()!=null && !camposIngresar[fila][columna].getText().equals("") )
          simplex[fila][columna]=Float.parseFloat(camposIngresar[fila][columna].getText());
         else
          simplex[fila][columna]=0;
@@ -46,14 +46,32 @@ class matriz {
   //Fin Getters.
   //Setters.
   //Fin Setters.
-
+ void dibujaOutputMatrix(int fila,int columna,PApplet parent) {
+          parent.line(columna*20*4,360+(fila*20*4) , columna*20*4,440+(fila*20*4) );
+          parent.line(columna*20*4,360+(fila*20*4) ,  70+(columna*20*4),360+(fila*20*4));
+          camposMostrar[fila][columna] = new GLabel(parent, columna*20*4,360+(fila*20*4) , 60, 40);   
+          camposMostrar[fila][columna].setText(Float.toString(simplex[fila][columna]));
+          camposMostrar[fila][columna].setLocalColorScheme(G4P.GREEN_SCHEME);
+          camposMostrar[fila][columna].setTextAlign(GAlign.CENTER, GAlign.MIDDLE); 
+          camposMostrar[fila][columna].setVisible(true);
+ }
+ 
   void dibujaInputMatrix(int fila,int columna) {  
     // System.out.println(" Filas"+fila+" columnas "+columna);
     this.camposIngresar[fila][columna]= new GTextField(parent,columna*20*4 ,(fila*20*4)+40 , 60, 40); 
     this.camposIngresar[fila][columna].tag = "F"+fila+"C"+columna;
     this.camposIngresar[fila][columna].setDefaultText("F"+(fila+1)+"C"+(columna+1));
+    camposIngresar[fila][columna].setVisible(true);
   }
-  void recorreMatrixY(String operacion, float [][] matriz) {
+    void disableInputMatrix(int fila,int columna) {  
+    // System.out.println(" Filas"+fila+" columnas "+columna);
+    this.camposIngresar[fila][columna].setVisible(false);
+  }
+      void disableOutputMatrix(int fila,int columna) {  
+    // System.out.println(" Filas"+fila+" columnas "+columna);
+    this.camposMostrar[fila][columna].setVisible(false);
+  }
+  void recorreMatrixY(String operacion, float [][] matriz, PApplet parent) {
     tt = new GTabManager();
     for (int fila=0;fila<matriz.length;fila++) {
       for (int columna=0;columna<matriz[0].length  ;columna++) {
@@ -64,9 +82,15 @@ class matriz {
        }
         else if("dibujaOutputMatrix" == operacion) { //convierte a simplex.
           simplex[fila][columna]=matriz[fila][columna];
-          dibujaOutputMatrix(fila,columna);
+          dibujaOutputMatrix(fila,columna,parent);
           parent.line( cantColumnasSimplex*20*4, 360, cantColumnasSimplex*20*4, 360+(cantFilasSimplex*20*4));
           parent.line( 1,360+(cantFilasSimplex*20*4), cantColumnasSimplex*20*4, 360+(cantFilasSimplex*20*4));
+        }
+        else if("disableInputMatrix" == operacion) { //convierte a simplex.
+          disableInputMatrix(fila,columna);
+        }
+         else if("disableOutputMatrix" == operacion) { //convierte a simplex.
+          disableOutputMatrix(fila,columna);
         }
         else {
 
@@ -75,13 +99,5 @@ class matriz {
     }
   }
 
- void dibujaOutputMatrix(int fila,int columna) {
-          parent.line(columna*20*4,360+(fila*20*4) , columna*20*4,440+(fila*20*4) );
-          parent.line(columna*20*4,360+(fila*20*4) ,  70+(columna*20*4),360+(fila*20*4));
-          camposMostrar[fila][columna] = new GLabel(parent, columna*20*4,360+(fila*20*4) , 60, 40);   
-          camposMostrar[fila][columna].setText(Float.toString(simplex[fila][columna]));
-          camposMostrar[fila][columna].setLocalColorScheme(G4P.GREEN_SCHEME);
-          camposMostrar[fila][columna].setTextAlign(GAlign.CENTER, GAlign.MIDDLE); 
- }
- 
+
 }
