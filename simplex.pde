@@ -73,13 +73,8 @@ public void handleTextEvents(GEditableTextControl tc, GEvent event) {
 public void handleButtonEvents(GButton button, GEvent event) { 
   if(button == botonNext) {
     numeroPaso=2;
-    paso = new GWindow(this, "paso N"+numeroPaso, 0, 0, 1024, 768, false, JAVA2D);
-    paso.setActionOnClose(G4P.CLOSE_WINDOW);
-    paso.addDrawHandler(this, "win_draw1");
-    label1 = new GLabel(paso.papplet, 472, 374, 80, 20);
-    label1.setText("Aca");
-    label1.setOpaque(false);
-    System.out.println("Next");
+    ventanaPaso();
+
   }
   if(button == botonPrev) {
    numeroPaso=3;
@@ -92,5 +87,11 @@ public void handleButtonEvents(GButton button, GEvent event) {
    valorCondiciones=valorVariables=0;
    pasoActual=null;
    simplex=null;
+  }
+  if(button == botonCancelaVentana) {
+   numeroPaso=0;
+   //null para todo
+   simplex.recorreMatrixY("disableOutputMatrix",pasoActual,paso.papplet);
+   pasoActual=null;
   }
 }

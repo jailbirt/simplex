@@ -6,7 +6,7 @@ class matriz {
   float[][]      simplex;
   PApplet        parent;  
   //Cantidad de condiciones y variables
-  int cantFilasSimplex,cantColumnasSimplex;
+  int cantFilasSimplex,cantColumnasSimplex,cantVariables;
   GTabManager tt;
 
   //START Funcion constructora del panelIngreso2, ingreso uno son restricciones y tipo de problema. TODO!!!!!HERE!!!!
@@ -14,6 +14,7 @@ class matriz {
     this.parent=parent;
     cantFilasSimplex=condiciones;
     cantColumnasSimplex=(variables+condiciones+1);//Las 'S' y la condición última.
+    cantVariables=variables;
     
     camposIngresar  = new GTextField[cantFilasSimplex][cantColumnasSimplex]; //Input
     camposMostrar   = new GLabel[cantFilasSimplex][cantColumnasSimplex];//lavels que se muestran
@@ -47,18 +48,19 @@ class matriz {
   //Setters.
   //Fin Setters.
  void dibujaOutputMatrix(int fila,int columna,PApplet parent) {
-          parent.line(columna*20*4,360+(fila*20*4) , columna*20*4,440+(fila*20*4) );
-          parent.line(columna*20*4,360+(fila*20*4) ,  70+(columna*20*4),360+(fila*20*4));
-          camposMostrar[fila][columna] = new GLabel(parent, columna*20*4,360+(fila*20*4) , 60, 40);   
+          //parent.line(columna*20*4,360+(fila*20*4) , columna*20*4,440+(fila*20*4) );
+          //parent.line(columna*20*4,360+(fila*20*4) ,  70+(columna*20*4),360+(fila*20*4));
+          camposMostrar[fila][columna] = new GLabel(parent, columna*20*4,60+(fila*20*4) , 60, 40);   
           camposMostrar[fila][columna].setText(Float.toString(simplex[fila][columna]));
           camposMostrar[fila][columna].setLocalColorScheme(G4P.GREEN_SCHEME);
           camposMostrar[fila][columna].setTextAlign(GAlign.CENTER, GAlign.MIDDLE); 
           camposMostrar[fila][columna].setVisible(true);
+          
+          camposMostrar[fila][columna].setOpaque(true);
  }
  
   void dibujaInputMatrix(int fila,int columna) {  
-    // System.out.println(" Filas"+fila+" columnas "+columna);
-    this.camposIngresar[fila][columna]= new GTextField(parent,columna*20*4 ,(fila*20*4)+40 , 60, 40); 
+    this.camposIngresar[fila][columna]= new GTextField(parent,columna*20*4 ,(fila*20*4)+60 , 60, 40); 
     this.camposIngresar[fila][columna].tag = "F"+fila+"C"+columna;
     this.camposIngresar[fila][columna].setDefaultText("F"+(fila+1)+"C"+(columna+1));
     camposIngresar[fila][columna].setVisible(true);
@@ -75,6 +77,10 @@ class matriz {
     tt = new GTabManager();
     for (int fila=0;fila<matriz.length;fila++) {
       for (int columna=0;columna<matriz[0].length  ;columna++) {
+         // System.out.println(" Filas"+fila+" columnas "+columna);
+         if (fila == 0) {
+           muestraLabelsMatrix(30,fila,columna,matriz,parent);
+         }
        if ("dibujaInputMatrix" == operacion){
           dibujaInputMatrix(fila,columna);
           // Create the tab manager and add these controls to it
@@ -83,21 +89,40 @@ class matriz {
         else if("dibujaOutputMatrix" == operacion) { //convierte a simplex.
           simplex[fila][columna]=matriz[fila][columna];
           dibujaOutputMatrix(fila,columna,parent);
-          parent.line( cantColumnasSimplex*20*4, 360, cantColumnasSimplex*20*4, 360+(cantFilasSimplex*20*4));
-          parent.line( 1,360+(cantFilasSimplex*20*4), cantColumnasSimplex*20*4, 360+(cantFilasSimplex*20*4));
+          //parent.line( cantColumnasSimplex*20*4, 360, cantColumnasSimplex*20*4, 360+(cantFilasSimplex*20*4));
+          //parent.line( 1,360+(cantFilasSimplex*20*4), cantColumnasSimplex*20*4, 360+(cantFilasSimplex*20*4));
         }
-        else if("disableInputMatrix" == operacion) { //convierte a simplex.
+        else if("disableInputMatrix" == operacion)  //convierte a simplex.
           disableInputMatrix(fila,columna);
-        }
-         else if("disableOutputMatrix" == operacion) { //convierte a simplex.
+       
+         else if("disableOutputMatrix" == operacion)  //convierte a simplex.
           disableOutputMatrix(fila,columna);
-        }
-        else {
+       
+        else {}
 
-        } 
+        
       }
     }
   }
+  //Metodo que agrega titulos, poner el offset de Y como parametro.
+  void muestraLabelsMatrix(int offset,int fila,int columna,float [][] matriz,PApplet parent){
+           fill(0);
+           GLabel rotulos=new GLabel(parent, columna*20*4,offset+(fila*20*4) , 60, 40);
+           String texto="";
+           if ((columna+1)==(matriz[0].length)){
+            texto="b";
+           }
+           else if((columna+1)>cantVariables){
+            texto="S"+(columna+1-cantVariables);
+           }
+           else{
+            texto="X"+(columna+1);
+           }
 
+           //System.out.println("Sacando.."+texto+"para f "+fila+"col "+(columna+1)+" cant mat"+matriz[0].length+ "cant col"+cantColumnasSimplex);
+           rotulos.setText(texto);
+           textSize(32);
+           //fin
+  }
 
 }
